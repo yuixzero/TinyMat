@@ -6,8 +6,10 @@
 #define MAT_MAT_HPP
 
 #include <string>
-//#include <fstream>
 #include <iostream>
+#include <eigen3/Eigen/Dense>
+
+using namespace Eigen;
 
 class Mat
 {
@@ -18,7 +20,7 @@ public:
 
 public:
     Mat(size_t row, size_t col);
-//    Mat(size_t row, size_t col, std::ifstream &f);
+    Mat(Matrix2d& mat);
     float operator() (size_t rowIndex, size_t colIndex) const;
     [[nodiscard]] size_t getRow() const;
     [[nodiscard]] size_t getCol() const;

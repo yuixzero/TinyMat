@@ -13,9 +13,6 @@ Mat::Mat(size_t row_, size_t col_) {
     }
 }
 
-//Mat::Mat(size_t row, size_t col, std::ifstream &f) {
-//
-//}
 
 inline float Mat::operator()(size_t rowIndex, size_t colIndex) const {
     return data[rowIndex * row + colIndex];
@@ -50,6 +47,18 @@ Mat Mat::dot_n3(Mat &m1, Mat &m2) {
         }
     }
     return res;
+}
+
+Mat::Mat(Matrix2d& mat) {
+    row = mat.rows();
+    col = mat.cols();
+    data = new float [row*col];
+
+    for (int i = 0; i < row; ++i) {
+        for (int j = 0; j < col; ++j) {
+            data[i * row + j] = static_cast<float>(mat(i,j));
+        }
+    }
 }
 
 
