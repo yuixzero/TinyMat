@@ -20,7 +20,7 @@ public:
 
 public:
     Mat(size_t row, size_t col);
-    Mat(Matrix2d& mat);
+    explicit Mat(MatrixXf & mat);
     Mat(Mat& mat);
     ~Mat();
     float operator() (size_t rowIndex, size_t colIndex) const;
@@ -28,7 +28,8 @@ public:
     [[nodiscard]] size_t getCol() const;
     void print() const;
 
-    static Mat dot_n3(Mat& m1, Mat& m2);
+    static Mat dot_n3(const Mat& m1, const Mat& m2);
+    static Mat dot_change_order(Mat& m1, Mat& m2);
 
 };
 

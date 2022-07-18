@@ -15,7 +15,7 @@ Mat::Mat(size_t row_, size_t col_) {
 
 
 inline float Mat::operator()(size_t rowIndex, size_t colIndex) const {
-    return data[rowIndex * row + colIndex];
+    return data[rowIndex * col + colIndex];
 }
 
 void Mat::print() const {
@@ -35,13 +35,19 @@ size_t Mat::getCol() const {
     return this->col;
 }
 
-Mat Mat::dot_n3(Mat &m1, Mat &m2) {
-    Mat res(m1.getCol(), m2.getRow());
+Mat Mat::dot_n3(const Mat& m1,const Mat& m2) {
+    size_t row_ = m1.getRow();
+    size_t col_ = m2.getCol();
+
     size_t index = 0;
-    for (size_t i = 0; i < m1.getCol(); ++i) {
-        for (size_t j = 0; j <m2.getRow() ; ++j) {
-            for (int k = 0; k < m1.getRow(); ++k) {
+    Mat res(row_, col_);
+
+
+    for (size_t i = 0; i < row_; ++i) {
+        for (size_t j = 0; j <col_ ; ++j) {
+            for (size_t k = 0; k < col_; ++k) {
                 res.data[index] += m1(i, k) * m2(k, j);
+
             }
             index++;
         }
@@ -49,14 +55,32 @@ Mat Mat::dot_n3(Mat &m1, Mat &m2) {
     return res;
 }
 
-Mat::Mat(Matrix2d& mat) {
+Mat Mat::dot_change_order(Mat &m1, Mat &m2) {
+    size_t row = m1.getRow();
+    size_t col = m2.getCol();
+
+    Mat res(row ,col);
+
+    for (size_t i = 0; i < row; ++i) {
+        for (size_t k = 0; k < col; ++k) {
+            float t = m1(i,k);
+            for (size_t j = 0; j <col ; ++j) {
+                res.data[i * col + j] += t * m2(k ,j);
+            }
+        }
+    }
+    return res;
+}
+
+
+Mat::Mat(MatrixXf& mat) {
     row = mat.rows();
     col = mat.cols();
     data = new float [row*col];
 
     for (int i = 0; i < row; ++i) {
         for (int j = 0; j < col; ++j) {
-            data[i * row + j] = static_cast<float>(mat(i,j));
+            data[i * col + j] = mat(i,j);
         }
     }
 }
@@ -73,10 +97,12 @@ Mat::Mat(Mat& mat)
     col = mat.col;
 
     data = new float [row*col];
-        for (int i = 0; i < row; ++i) {
+    for (int i = 0; i < row; ++i) {
         for (int j = 0; j < col; ++j) {
-            data[i * row + j] = mat(i,j);
+            data[i * col + j] = mat(i,j);
         }
     }
 }
+
+
 
