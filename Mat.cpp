@@ -61,6 +61,22 @@ Mat::Mat(Matrix2d& mat) {
     }
 }
 
+Mat::~Mat()
+{
+    delete[] data;
+    data = nullptr;
+}
 
+Mat::Mat(Mat& mat)
+{
+    row = mat.row;
+    col = mat.col;
 
+    data = new float [row*col];
+        for (int i = 0; i < row; ++i) {
+        for (int j = 0; j < col; ++j) {
+            data[i * row + j] = mat(i,j);
+        }
+    }
+}
 

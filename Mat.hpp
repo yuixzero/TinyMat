@@ -21,6 +21,8 @@ public:
 public:
     Mat(size_t row, size_t col);
     Mat(Matrix2d& mat);
+    Mat(Mat& mat);
+    ~Mat();
     float operator() (size_t rowIndex, size_t colIndex) const;
     [[nodiscard]] size_t getRow() const;
     [[nodiscard]] size_t getCol() const;
