@@ -8,6 +8,8 @@
 #include <string>
 #include <iostream>
 #include <eigen3/Eigen/Dense>
+#include <thread>
+#include "Thread.hpp"
 
 using namespace Eigen;
 
@@ -29,7 +31,11 @@ public:
     void print() const;
 
     static Mat dot_n3(const Mat& m1, const Mat& m2);
-    static Mat dot_change_order(Mat& m1, Mat& m2);
+    static Mat dot_change_order(const Mat& m1, const Mat& m2);
+    static Mat dot_parallel(const Mat& m1, const Mat& m2);
+    static Mat dot_thread_pool(const Mat& m1, const Mat& m2);
+    static void help_func(const Mat* m1, const Mat* m2, Mat* res, size_t startIndex, size_t endIndex);
+    static void calc_res(const Mat* m1, const Mat* m2, Mat* res, size_t i, size_t j);
 
 };
 
