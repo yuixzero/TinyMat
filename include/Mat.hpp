@@ -11,6 +11,8 @@
 #include <thread>
 #include "Thread.hpp"
 
+// #include <cblas.h>
+
 using namespace Eigen;
 
 class Mat
@@ -34,8 +36,10 @@ public:
     static Mat dot_change_order(const Mat& m1, const Mat& m2);
     static Mat dot_parallel(const Mat& m1, const Mat& m2);
     static Mat dot_thread_pool(const Mat& m1, const Mat& m2);
+    static Mat dot_avx2(const Mat& m1, const Mat& m2);
     static void help_func(const Mat* m1, const Mat* m2, Mat* res, size_t startIndex, size_t endIndex);
     static void calc_res(const Mat* m1, const Mat* m2, Mat* res, size_t i, size_t j);
+    static float _mm_vec_dot(const float *v1, const float *v2, const size_t len);
 
 };
 

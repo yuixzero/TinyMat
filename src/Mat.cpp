@@ -2,11 +2,13 @@
 // Created by Null on 2022/7/17.
 //
 #include "Mat.hpp"
+#include <immintrin.h>
 
 Mat::Mat(size_t row_, size_t col_) {
     row = row_;
     col = col_;
-    data = new float [row*col];
+    // data = static_cast<float*> (aligned_alloc(256, sizeof(float)*row*col));
+    data = new float[row*col];
     for (int i = 0; i < row*col; ++i) {
         data[i] = 0.0f;
     }
@@ -93,6 +95,47 @@ void Mat::help_func(const Mat* m1, const Mat* m2, Mat* res, size_t startIndex, s
     }  
 }
 
+float _mm_vec_dot(const float *v1, const float *v2, const size_t len)
+{
+    float s[8] = {0};
+    __m256 a,b;
+    __m256 c = _mm256_setzero_ps();
+    for (size_t i = 0; i < len; i+=8)
+    {
+        a = _mm256_load_ps(v1 + i);
+        b = _mm256_load_ps(v2 + i);
+        c =  _mm256_add_ps(c, _mm256_mul_ps(a, b));
+    }
+    _mm256_store_ps(s, c);
+    auto sum = s[0] + s[1] + s[2] + s[3] + s[4] + s[5] + s[6] + s[7];
+    for (size_t i = len - 1; i >= len - len % 8; i--) sum += v1[i] * v2[i];
+
+    return sum;
+
+}
+
+Mat Mat::dot_avx2(const Mat& m1, const Mat& m2){
+    size_t row = m1.getRow();
+    size_t col = m2.getCol();
+
+    Mat res(row ,col);
+
+    for (size_t i = 0; i < row; ++i) {
+        for (size_t j = 0; j < col ; ++j) {
+            auto v1 = static_cast<float *>(aligned_alloc(256, sizeof(float) * m1.getCol()));
+            auto v2 = static_cast<float *>(aligned_alloc(256, sizeof(float) * m2.getRow()));
+            // memcpy(v1, m1.data + m1.getCol()*i, m1.getCol() * sizeof(float));
+            for (size_t k = 0; k < m1.getCol(); ++k) v2[k] = m1.data[i * col + k];
+            for (size_t k = 0; k < m2.getRow(); ++k) v2[k] = m2.data[k * col + j];
+            res.data[i * col + j] = _mm_vec_dot(v1, v2, m2.getRow());
+            delete[] v2;
+        }
+    }
+
+    return res;
+}
+
+
 Mat Mat::dot_thread_pool(const Mat& m1, const Mat& m2){
     size_t row = m1.getRow();
     size_t col = m2.getCol();
@@ -101,7 +144,7 @@ Mat Mat::dot_thread_pool(const Mat& m1, const Mat& m2){
 
     ThreadPool pool(2);
     for (size_t i = 0; i < row; ++i) {
-        for (size_t j = 0; j <col ; ++j) {
+        for (size_t j = 0; j < col ; ++j) {
             pool.enqueue(calc_res, &m1, &m2, &res, i, j);
         }
     }
@@ -142,7 +185,8 @@ Mat::Mat(Mat& mat)
     row = mat.row;
     col = mat.col;
 
-    data = new float [row*col];
+    // data = static_cast<float*> (aligned_alloc(256, row*col*sizeof(float)));
+    data = new float[row*col];
     for (int i = 0; i < row; ++i) {
         for (int j = 0; j < col; ++j) {
             data[i * col + j] = mat(i,j);

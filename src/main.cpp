@@ -4,15 +4,15 @@ using namespace Eigen;
 using namespace std;
 
 int main() {
-    MatrixXf a1 = MatrixXf::Random(560,560);
+    MatrixXf a1 = MatrixXf::Random(2048,2048);
     Mat b1(a1);
 
 
-    MatrixXf a2 = MatrixXf::Random(560,560);
+    MatrixXf a2 = MatrixXf::Random(2048,2048);
     Mat b2(a2);
 
     clock_t s = clock();
-    Mat c1 = Mat::dot_change_order(b1, b2);
+    Mat c1 = Mat::dot_avx2(b1, b2);
     clock_t e = clock();
     cout <<"Time use: "<< (double)(e - s) / CLOCKS_PER_SEC << "s"<<endl;
 
