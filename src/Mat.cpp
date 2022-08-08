@@ -114,21 +114,20 @@ float Mat::_mm_vec_dot(const float *v1, const float *v2, const size_t len)
 
 }
 
+//TODO:fixme
 Mat Mat::dot_avx2(const Mat& m1, const Mat& m2){
     size_t row = m1.getRow();
     size_t col = m2.getCol();
 
     Mat res(row ,col);
+    auto v1 = static_cast<float *>(aligned_alloc(256, sizeof(float) * m1.getCol()));
+    auto v2 = static_cast<float *>(aligned_alloc(256, sizeof(float) * m2.getRow()));
 
     for (size_t i = 0; i < row; ++i) {
         for (size_t j = 0; j < col ; ++j) {
-            auto v1 = static_cast<float *>(aligned_alloc(256, sizeof(float) * m1.getCol()));
-            auto v2 = static_cast<float *>(aligned_alloc(256, sizeof(float) * m2.getRow()));
-            // memcpy(v1, m1.data + m1.getCol()*i, m1.getCol() * sizeof(float));
-            for (size_t k = 0; k < m1.getCol(); ++k) v2[k] = m1.data[i * col + k];
+            for (size_t k = 0; k < m1.getCol(); ++k) v1[k] = m1.data[i * col + k];
             for (size_t k = 0; k < m2.getRow(); ++k) v2[k] = m2.data[k * col + j];
             res.data[i * col + j] = _mm_vec_dot(v1, v2, m2.getRow());
-            delete[] v2;
         }
     }
 
