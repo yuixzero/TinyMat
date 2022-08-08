@@ -95,7 +95,7 @@ void Mat::help_func(const Mat* m1, const Mat* m2, Mat* res, size_t startIndex, s
     }  
 }
 
-float _mm_vec_dot(const float *v1, const float *v2, const size_t len)
+float Mat::_mm_vec_dot(const float *v1, const float *v2, const size_t len)
 {
     float s[8] = {0};
     __m256 a,b;

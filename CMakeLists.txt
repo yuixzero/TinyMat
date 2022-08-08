@@ -3,7 +3,7 @@ project(Mat)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_BUILD_TYPE RELEASE)
-set(CMAKE_CXX_FLAGS "${CAMKE_CXX_FLAGS} -pthread")
+set(CMAKE_CXX_FLAGS "${CAMKE_CXX_FLAGS} -pthread -mavx")
 
 aux_source_directory(src DIR_SRC)
 
